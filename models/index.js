@@ -23,5 +23,14 @@ db.sequelize = sequelize;
 db.treino = require("./treino.model")(sequelize, Sequelize);
 db.exercicio = require("./exercicio.model")(sequelize, Sequelize);
 db.rotina = require("./rotina.model")(sequelize, Sequelize);
- 
+
+const rotina = db.rotina;
+const treino = db.treino;
+const exercicio = db.exercicio;
+
+rotina.hasMany(treino, {
+  foreignKey: 'rotinaId',
+});
+treino.belongsTo(rotina);
+
 module.exports = db;
