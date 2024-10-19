@@ -33,4 +33,7 @@ rotina.hasMany(treino, {
 });
 treino.belongsTo(rotina);
 
+treino.belongsToMany(exercicio, { through: 'TreinoExercicio' });
+exercicio.belongsToMany(treino, { through: 'TreinoExercicio' });
+
 module.exports = db;
