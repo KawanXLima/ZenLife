@@ -21,5 +21,6 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.treino = require("./treino.model")(sequelize, Sequelize);
+db.exercicio = require("./exercicio.model")(sequelize, Sequelize);
 
 module.exports = db;
