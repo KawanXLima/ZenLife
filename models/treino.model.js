@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TIME(6),
     },
     dia_atual: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
     },
   });
 
