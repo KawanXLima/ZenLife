@@ -30,7 +30,7 @@ exports.create = async (req, res) => {
   }
 
   try {
-    const result = await gerar_resposta(req.body);
+    const result = await gerar_rotina(req.body);
     if (result) {
       res.send({ data: result });
     }
@@ -42,7 +42,7 @@ exports.create = async (req, res) => {
   }
 };
 
-async function gerar_resposta(req_body) {
+async function gerar_rotina(req_body) {
   const {
     peso,
     height,
