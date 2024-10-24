@@ -1,6 +1,6 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const db = require("../models/index");
-const rotina = db.rotina;
+const Rotina = db.rotina;
 
 exports.create = async (req, res) => {
   const {
@@ -30,9 +30,19 @@ exports.create = async (req, res) => {
   }
 
   try {
-    const result = await gerar_rotina(req.body);
-    if (result) {
-      res.send({ data: result });
+    const rotina = await gerar_rotina(req.body);
+    if (rotina) {
+      try {
+        const result_insert = await inserir_rotina(rotina);
+        if (result_insert) {
+          return res.send({ data: true });
+        }
+      } catch (error) {
+        res.status(500).send({
+          message: "An error occurred while insertion in the database.",
+          error: error.message,
+        });
+      }
     }
   } catch (error) {
     res.status(500).send({
@@ -61,13 +71,11 @@ async function gerar_rotina(req_body) {
   se possuí algum tipo de lesão: ${lesao}, 
   e qual a área deseja ter mais desenvolvimento: ${area_desenvolvimento}, 
   a quantidade de dias desejados para a rotina: ${duracao_rotina} e ignore qualquer outro parametro que não seja os passados, 
-  retorne em json um objeto chamado rotina com a propriedade duração, que está relacionado com quantidade de dias informado. 
+  retorne em json um objeto chamado rotina com a propriedade duracao, que está relacionado com a quantidade de dias informada. 
   O objeto chamado rotina contém um objeto chamado treino, que é um array de objetos com as propriedades, 
-  duração, dia atual.E cada um desses objetos dentro do array, 
-  contém um objeto chamado exercícios com as seguintes propriedades, foco do exercício, repetição, série, 
-  tipo do exercício, tempo.E a quantidade de exercícios varia de acordo com o tempo exato de cada exercício, 
-  dentro da duração exata definida no treino. Não retorne nenhuma observação além das passadas no prompt, 
-  retorne em json e nenhuma propriedade pode ter acento. `;
+  duracao, dia_atual. E cada um desses objetos dentro do array contém um objeto chamado exercicios com as seguintes propriedades: foco_exercicio, repeticao, serie, 
+  tipo_exercicio, tempo. A quantidade de exercicios varia de acordo com o tempo exato de cada exercicio dentro da duracao exata definida no treino. 
+  Não retorne nenhuma observação além das passadas no prompt, retorne em json e nenhuma propriedade pode ter acento.`;
 
   try {
     const genAI = new GoogleGenerativeAI(process.env.API_KEY);
@@ -84,10 +92,20 @@ async function gerar_rotina(req_body) {
 
       const jsonObject = JSON.parse(jsonString);
 
-      return jsonObject;
+      return jsonObject.rotina; // Retorna apenas a rotina gerada
     }
     return false;
   } catch (error) {
     throw new Error("Failed to generate response: " + error.message);
+  }
+}
+
+async function inserir_rotina(rotina) {
+  try {
+    const result_insert = await Rotina.create(rotina); // Insere o objeto rotina completo
+    return result_insert;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to insert routine in the database.");
   }
 }
