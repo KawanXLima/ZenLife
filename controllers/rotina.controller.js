@@ -1,6 +1,7 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const db = require("../models/index");
 const Rotina = db.rotina;
+const Treino = db.treino;
 
 exports.create = async (req, res) => {
   const {
@@ -33,8 +34,12 @@ exports.create = async (req, res) => {
     const rotina = await gerar_rotina(req.body);
     if (rotina) {
       try {
-        const result_insert = await inserir_rotina(rotina);
-        if (result_insert) {
+        const result_insert_rotina = await inserir_rotina(rotina);
+        const result_insert_treino = await inserir_treino(
+          rotina,
+          result_insert_rotina.id
+        );
+        if (result_insert_rotina && result_insert_treino) {
           return res.send({ data: true });
         }
       } catch (error) {
@@ -104,6 +109,27 @@ async function inserir_rotina(rotina) {
   try {
     const result_insert = await Rotina.create(rotina); // Insere o objeto rotina completo
     return result_insert;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to insert routine in the database.");
+  }
+}
+
+async function inserir_treino(rotina, rotinaId) {
+  try {
+    let flag = 0;
+        
+    for (let i = 0; i < rotina.treino.length; i++) {
+      let treinoObj = {
+        duracao: rotina.treino[i].duracao,
+        rotinaId: rotinaId,
+      };
+      await Treino.create(treinoObj);
+      flag = 1;
+    }
+    if(flag == 1){
+      return true
+    }
   } catch (error) {
     console.log(error);
     throw new Error("Failed to insert routine in the database.");
