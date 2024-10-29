@@ -2,6 +2,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const db = require("../../models/index");
 const Rotina = db.rotina;
 const Treino = db.treino;
+const Exercicio = db.exercicio;
 
 exports.create = async (req, res) => {
   const {
@@ -35,16 +36,18 @@ exports.create = async (req, res) => {
     if (rotina) {
       try {
         const result_insert_rotina = await inserir_rotina(rotina);
-        const result_insert_treino = await inserir_treino(
-          rotina,
-          result_insert_rotina.id
-        );
-        if (result_insert_rotina && result_insert_treino) {
-          return res.send({ data: true });
+        if (result_insert_rotina) {
+          const result_insert_treino = await inserir_treino(
+            rotina.treino,
+            result_insert_rotina.id
+          );
+          if (result_insert_treino) {
+            return res.send({ data: true });
+          }
         }
       } catch (error) {
         res.status(500).send({
-          message: "An error occurred while insertion in the database.",
+          message: "An error occurred while inserting in the database.",
           error: error.message,
         });
       }
@@ -68,7 +71,6 @@ async function gerar_rotina(req_body) {
     area_desenvolvimento,
     duracao_rotina,
   } = req_body;
-
   const prompt = `Crie uma rotina de exercícios completa para uma pessoa a partir das seguintes informações: com peso atual: ${peso}kg, 
   altura:${height}, e atualmente nível de atividade: ${nivel_atividade}, 
   o modo de realização do exercício: ${tipo_exercicio}, 
@@ -85,16 +87,14 @@ async function gerar_rotina(req_body) {
   try {
     const genAI = new GoogleGenerativeAI(process.env.API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     const response = await model.generateContent(prompt);
+
     if (response.response && response.response.candidates) {
       const jsonText = response.response.candidates[0]?.content.parts[0].text;
-
       let jsonString = jsonText
         .replace(/```\w*\n/g, "")
         .replace(/\n```/g, "")
         .trim();
-
       const jsonObject = JSON.parse(jsonString);
 
       return jsonObject.rotina; // Retorna apenas a rotina gerada
@@ -105,9 +105,10 @@ async function gerar_rotina(req_body) {
   }
 }
 
+// Inserção da rotina no banco de dados
 async function inserir_rotina(rotina) {
   try {
-    const result_insert = await Rotina.create(rotina); // Insere o objeto rotina completo
+    const result_insert = await Rotina.create(rotina);
     return result_insert;
   } catch (error) {
     console.log(error);
@@ -115,23 +116,40 @@ async function inserir_rotina(rotina) {
   }
 }
 
-async function inserir_treino(rotina, rotinaId) {
+async function inserir_treino(treinoArray, rotinaId) {
   try {
-    let flag = 0;
-        
-    for (let i = 0; i < rotina.treino.length; i++) {
-      let treinoObj = {
-        duracao: rotina.treino[i].duracao,
-        rotinaId: rotinaId,
-      };
-      await Treino.create(treinoObj);
-      flag = 1;
+    for (const treino of treinoArray) {
+      const treinoObj = await Treino.create({
+        duracao: treino.duracao,
+        rotinaId,
+      });
+      await inserir_exercicio(treino.exercicios, treinoObj);
     }
-    if(flag == 1){
-      return true
+    return true;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to insert workout sessions in the database.");
+  }
+}
+
+async function inserir_exercicio(exercicios, treino) {
+  try {
+    for (const exercicio of exercicios) {
+      const [exercicioObj] = await Exercicio.findOrCreate({
+        where: {
+          foco_exercicio: exercicio.foco_exercicio,
+          tipo_exercicio: exercicio.tipo_exercicio,
+          repeticao: exercicio.repeticao,
+          serie: exercicio.serie,
+          tempo: exercicio.tempo,
+        },
+        defaults: exercicio,
+      });
+
+      await treino.addExercicio(exercicioObj);
     }
   } catch (error) {
     console.log(error);
-    throw new Error("Failed to insert routine in the database.");
+    throw new Error("Failed to insert exercises in the database.");
   }
 }
