@@ -8,9 +8,9 @@ module.exports = (app) => {
 
   router.post("/", rotinaGerar.create);
   router.get("/", rotinaView.findAll);
-  router.get("/{id}", rotinaView.findOne);
-  router.put("/", rotinaUpdate.update);
-  router.delete("/{id}", rotinaDelete.delete);
+  router.get("/:id", rotinaView.findOne);
+  router.put("/:id", rotinaUpdate.update);
+  router.delete("/:id", rotinaDelete.delete);
 
   app.use("/api/rotina", router);
 };

@@ -24,7 +24,7 @@ exports.findAll = async (req, res) => {
   } catch (error) {
     res.status(404).send({
       message:
-        error.message || "Some error occurred while retrieving funcionario.",
+        error.message || "Some error occurred while retrieving rotina.",
     });
   }
 };
