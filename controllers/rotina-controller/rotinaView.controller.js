@@ -1,4 +1,4 @@
-const db = require("../models/index");
+const db = require("../../models/index");
 const Rotina = db.rotina;
 const Treino = db.treino;
 
