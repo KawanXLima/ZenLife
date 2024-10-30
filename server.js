@@ -5,11 +5,7 @@ const db = require("./models/index");
 
 const app = express();
 
-const corsOptions = {
-  origin: "http://localhost:8081",
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(express.json());
 
