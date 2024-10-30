@@ -1,5 +1,6 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const db = require("../../models/index");
+const { TIME } = require("sequelize");
 const Rotina = db.rotina;
 const Treino = db.treino;
 const Exercicio = db.exercicio;
@@ -119,8 +120,10 @@ async function inserir_rotina(rotina) {
 async function inserir_treino(treinoArray, rotinaId) {
   try {
     for (const treino of treinoArray) {
+      let tempo = formatTime(treino.duracao);
+
       const treinoObj = await Treino.create({
-        duracao: treino.duracao,
+        duracao: tempo,
         rotinaId,
       });
       await inserir_exercicio(treino.exercicios, treinoObj);
@@ -135,13 +138,15 @@ async function inserir_treino(treinoArray, rotinaId) {
 async function inserir_exercicio(exercicios, treino) {
   try {
     for (const exercicio of exercicios) {
+      let tempo = formatTime(exercicio.tempo);
+      exercicio.tempo = tempo;
       const [exercicioObj] = await Exercicio.findOrCreate({
         where: {
           foco_exercicio: exercicio.foco_exercicio,
           tipo_exercicio: exercicio.tipo_exercicio,
           repeticao: exercicio.repeticao,
           serie: exercicio.serie,
-          tempo: exercicio.tempo,
+          tempo: tempo,
         },
         defaults: exercicio,
       });
@@ -152,4 +157,27 @@ async function inserir_exercicio(exercicios, treino) {
     console.log(error);
     throw new Error("Failed to insert exercises in the database.");
   }
+}
+
+function formatTime(value) {
+  let hours, minutes;
+
+  if (value < 60) {
+    // Considera que o valor representa minutos
+    hours = 0;
+    minutes = value;
+  } else {
+    // Considera que o valor representa horas
+    hours = Math.floor(value / 60);
+    minutes = value % 60;
+  }
+
+  // Formata o tempo para o padrão HH:MM:SS
+  const formattedTime =
+    String(hours).padStart(2, "0") +
+    ":" +
+    String(minutes).padStart(2, "0") +
+    ":00";
+
+  return formattedTime;
 }

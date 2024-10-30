@@ -5,15 +5,15 @@ module.exports = (sequelize, DataTypes) => {
         allowNull:false,
       },
       repeticao: {
-        type: DataTypes.TINYINT,
+        type: DataTypes.SMALLINT,
         allowNull:false,
       },
       serie: {
-        type: DataTypes.TINYINT,
+        type: DataTypes.SMALLINT,
         allowNull:false,
       },
       tipo_exercicio: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         allowNull:false,  
       },
       tempo:{

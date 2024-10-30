@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
     const Rotina = sequelize.define("rotina", {
         duracao: {
-            type: DataTypes.TINYINT,
+            type: DataTypes.SMALLINT,
             allowNull:false,
         },
         data_inicio: {
