@@ -82,8 +82,10 @@ async function gerar_rotina(req_body) {
   retorne em json um objeto chamado rotina com a propriedade duracao, que está relacionado com a quantidade de dias informada. 
   O objeto chamado rotina contém um objeto chamado treino, que é um array de objetos com as propriedades, 
   duracao, dia_atual. E cada um desses objetos dentro do array contém um objeto chamado exercicios com as seguintes propriedades: foco_exercicio, repeticao, serie, 
-  tipo_exercicio, tempo. A quantidade de exercicios varia de acordo com o tempo exato de cada exercicio dentro da duracao exata definida no treino. 
-  Não retorne nenhuma observação além das passadas no prompt, retorne em json e nenhuma propriedade pode ter acento.`;
+  tipo_exercicio, tempo. A quantidade de exercicios varia de acordo com o tempo exato de cada exercicio dentro da duracao exata definida no treino, 
+  retorne um treino de exercícios de diferentes aréas do corpo dando mais destaque sobre a aréa de desenvolvimento escolhida, 
+  e retorne um valor de horário onde ele varia entre o tempo escolhido do tempo do exercício,
+  não retorne nenhuma observação além das passadas no prompt, retorne em json e nenhuma propriedade pode ter acento.`;
 
   try {
     const genAI = new GoogleGenerativeAI(process.env.API_KEY);
