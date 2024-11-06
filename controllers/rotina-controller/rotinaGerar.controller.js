@@ -1,6 +1,6 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { formatTime } = require("../../utils/timeUtils");
 const db = require("../../models/index");
-const { TIME } = require("sequelize");
 const Rotina = db.rotina;
 const Treino = db.treino;
 const Exercicio = db.exercicio;
@@ -159,27 +159,4 @@ async function inserir_exercicio(exercicios, treino) {
     console.log(error);
     throw new Error("Failed to insert exercises in the database.");
   }
-}
-
-function formatTime(value) {
-  let hours, minutes;
-
-  if (value < 60) {
-    // Considera que o valor representa minutos
-    hours = 0;
-    minutes = value;
-  } else {
-    // Considera que o valor representa horas
-    hours = Math.floor(value / 60);
-    minutes = value % 60;
-  }
-
-  // Formata o tempo para o padrão HH:MM:SS
-  const formattedTime =
-    String(hours).padStart(2, "0") +
-    ":" +
-    String(minutes).padStart(2, "0") +
-    ":00";
-
-  return formattedTime;
 }

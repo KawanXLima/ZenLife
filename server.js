@@ -29,6 +29,7 @@ app.get("/", (req, res) => {
 });
 
 require("./routes/rotina.route")(app);
+require("./routes/treino.route")(app);
 
 const PORT = process.env.NODE_LOCAL_PORT || 8080;
 

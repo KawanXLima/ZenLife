@@ -8,5 +8,5 @@ module.exports = (app) => {
   router.get("/:id", treinoView.findOne);
   router.put("/:id", treinoUpdate.update);
 
-  app.use("/api/rotina", router);
+  app.use("/api/treino", router);
 };
