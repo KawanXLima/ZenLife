@@ -1,5 +1,6 @@
 const { sumTime } = require("../../utils/timeUtils");
 const db = require("../../models/index");
+const { ExclusionConstraintError } = require("sequelize");
 const Treino = db.treino;
 
 exports.update = (req, res) => {
