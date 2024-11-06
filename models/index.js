@@ -35,8 +35,8 @@ rotina.hasMany(treino, {
 });
 treino.belongsTo(rotina);
 
-treino.belongsToMany(exercicio, { through: 'TreinoExercicio' });
-exercicio.belongsToMany(treino, { through: 'TreinoExercicio' });
+treino.belongsToMany(exercicio, { through: 'treinoExercicio' });
+exercicio.belongsToMany(treino, { through: 'treinoExercicio' });
 
 usuario.hasOne(rotina , {
   foreignKey: 'usuarioId',
