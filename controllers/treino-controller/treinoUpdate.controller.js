@@ -1,10 +1,26 @@
+const { sumTime } = require("../../utils/timeUtils");
 const db = require("../../models/index");
 const Treino = db.treino;
 
 exports.update = (req, res) => {
   const id = req.params.id;
 
-  Treino.update(req.body, {
+  let { horario_inicial, horario_final, duracao } = req.body;
+
+  if (!horario_inicial || !duracao || !id) {
+    return res.status(400).send({
+      message: "Content can not be empty! Please fill all the fields.",
+    });
+  }
+  horario_final = sumTime(horario_inicial, duracao);
+  
+  const treino_atualizado = {
+    horario_inicial: horario_inicial,
+    horario_final: horario_final,
+    duracao: duracao,
+  };
+
+  Treino.update(treino_atualizado, {
     where: { id: id },
   })
     .then((num) => {
