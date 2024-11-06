@@ -23,10 +23,12 @@ db.sequelize = sequelize;
 db.treino = require("./treino.model")(sequelize, Sequelize);
 db.exercicio = require("./exercicio.model")(sequelize, Sequelize);
 db.rotina = require("./rotina.model")(sequelize, Sequelize);
+db.usuario = require("./usuario.model")(sequelize, Sequelize);
 
 const rotina = db.rotina;
 const treino = db.treino;
 const exercicio = db.exercicio;
+const usuario = db.usuario
 
 rotina.hasMany(treino, {
   foreignKey: 'rotinaId',
@@ -35,5 +37,13 @@ treino.belongsTo(rotina);
 
 treino.belongsToMany(exercicio, { through: 'TreinoExercicio' });
 exercicio.belongsToMany(treino, { through: 'TreinoExercicio' });
+
+usuario.hasOne(rotina , {
+  foreignKey: 'usuarioId',
+  as: 'rotina'
+});
+  rotina.belongsTo(usuario, {
+  as: 'usuario'
+});
 
 module.exports = db;
