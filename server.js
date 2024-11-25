@@ -1,11 +1,14 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const db = require("./models/index");
 
 const app = express();
 
 app.use(cors());
+
+app.use(cookieParser());
 
 app.use(express.json());
 
@@ -28,6 +31,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to ZenLife API" });
 });
 
+require("./routes/autenticacao.route")(app);
 require("./routes/rotina.route")(app);
 require("./routes/treino.route")(app);
 require("./routes/usuario.route")(app);
