@@ -1,17 +1,25 @@
 const jsonwebtoken = require("jsonwebtoken");
-const KEY = "07805336a5e337707b14719921175f786a5cdb4b6ff2de3367b3a9b71a45516e";
+const KEY = process.env.JWT_SECRET;
 
 exports.logado = async (req, res, next) => {
-  Auth = req.cookie.Token || null;
+  try {
+    // Obter o token dos cookies
+    const auth = req.cookies?.Token;
 
-  if (typeof Auth == "undefined" || Auth == "" || Auth == null) {
-    return res.send({ erro: { login: "Não autorizado." } });
-  } else {
-    try {
-      Token = await jsonwebtoken.verify(Auth, KEY);
-      next();
-    } catch (error) {
-      return res.send({ erro: { login: "Não autorizado." } });
+    // Validar se o token está presente
+    if (!auth) {
+      return res.status(401).json({ erro: { login: "Não autorizado. Token ausente." } });
     }
+
+    // Verificar o token
+    const token = await jsonwebtoken.verify(auth, KEY);
+
+    // Adicionar o payload do token no request para uso futuro
+    req.user = token;
+
+    // Passar para o próximo middleware
+    next();
+  } catch (error) {
+    return res.status(401).json({ erro: { login: "Não autorizado. Token inválido." } });
   }
 };

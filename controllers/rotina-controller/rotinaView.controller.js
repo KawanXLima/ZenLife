@@ -18,13 +18,15 @@ exports.findAll = async (req, res) => {
           ],
         },
       ],
+      where: {
+        usuarioId: req.user.id,
+      },
     });
 
     res.send({ rotina: rotina });
   } catch (error) {
     res.status(404).send({
-      message:
-        error.message || "Some error occurred while retrieving rotina.",
+      message: error.message || "Some error occurred while retrieving rotina.",
     });
   }
 };
@@ -32,7 +34,7 @@ exports.findAll = async (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Rotina.findByPk(id, {
+  Rotina.findOne({
     include: [
       {
         model: Treino,
@@ -45,6 +47,10 @@ exports.findOne = (req, res) => {
         ],
       },
     ],
+    where: {
+      id: id,
+      usuarioId: req.user.id,
+    },
   })
     .then((data) => {
       if (data) {

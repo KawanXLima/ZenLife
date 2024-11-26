@@ -36,11 +36,12 @@ exports.create = async (req, res) => {
     const rotina = await gerar_rotina(req.body);
     if (rotina) {
       try {
-        const result_insert_rotina = await inserir_rotina(rotina);
+        const result_insert_rotina = await inserir_rotina(rotina, req.user.id);
         if (result_insert_rotina) {
           const result_insert_treino = await inserir_treino(
             rotina.treino,
-            result_insert_rotina.id
+            result_insert_rotina.id,
+            req.user.id
           );
           if (result_insert_treino) {
             return res.send({ data: true });
@@ -109,9 +110,13 @@ async function gerar_rotina(req_body) {
 }
 
 // Inserção da rotina no banco de dados
-async function inserir_rotina(rotina) {
+async function inserir_rotina(rotina, userId) {
   try {
-    const result_insert = await Rotina.create(rotina);
+    const rotinaComUsuario = {
+      ...rotina,
+      usuarioId: userId,
+    };
+    const result_insert = await Rotina.create(rotinaComUsuario);
     return result_insert;
   } catch (error) {
     console.log(error);
@@ -119,7 +124,7 @@ async function inserir_rotina(rotina) {
   }
 }
 
-async function inserir_treino(treinoArray, rotinaId) {
+async function inserir_treino(treinoArray, rotinaId, userId) {
   try {
     for (const treino of treinoArray) {
       let tempo = formatTime(treino.duracao);
@@ -127,6 +132,7 @@ async function inserir_treino(treinoArray, rotinaId) {
       const treinoObj = await Treino.create({
         duracao: tempo,
         rotinaId,
+        usuarioId: userId,
       });
       await inserir_exercicio(treino.exercicios, treinoObj);
     }

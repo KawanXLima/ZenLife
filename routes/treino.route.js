@@ -6,7 +6,7 @@ module.exports = (app) => {
 
   router.get("/", treinoView.findAll);
   router.get("/:id", treinoView.findOne);
-  router.put("/:id", treinoUpdate.update);
+  router.put("/", treinoUpdate.update);
 
   app.use("/api/treino", router);
 };

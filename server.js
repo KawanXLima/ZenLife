@@ -3,6 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const db = require("./models/index");
+const validarLogin = require("./controllers/autenticacao-controller/logado.controller");
 
 const app = express();
 
@@ -32,8 +33,8 @@ app.get("/", (req, res) => {
 });
 
 require("./routes/autenticacao.route")(app);
-require("./routes/rotina.route")(app);
-require("./routes/treino.route")(app);
+require("./routes/rotina.route")(app.use("/api/rotina", validarLogin.logado));
+require("./routes/treino.route")(app.use("/api/treino", validarLogin.logado));
 require("./routes/usuario.route")(app);
 
 const PORT = process.env.NODE_LOCAL_PORT || 8080;

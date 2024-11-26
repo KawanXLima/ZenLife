@@ -28,22 +28,27 @@ db.usuario = require("./usuario.model")(sequelize, Sequelize);
 const rotina = db.rotina;
 const treino = db.treino;
 const exercicio = db.exercicio;
-const usuario = db.usuario
+const usuario = db.usuario;
 
 rotina.hasMany(treino, {
-  foreignKey: 'rotinaId',
+  foreignKey: "rotinaId",
 });
 treino.belongsTo(rotina);
 
-treino.belongsToMany(exercicio, { through: 'treinoExercicio' });
-exercicio.belongsToMany(treino, { through: 'treinoExercicio' });
+treino.belongsToMany(exercicio, { through: "treinoExercicio" });
+exercicio.belongsToMany(treino, { through: "treinoExercicio" });
 
-usuario.hasOne(rotina , {
-  foreignKey: 'usuarioId',
-  as: 'rotina'
+usuario.hasOne(rotina, {
+  foreignKey: "usuarioId",
+  as: "rotina",
 });
-  rotina.belongsTo(usuario, {
-  as: 'usuario'
+rotina.belongsTo(usuario, {
+  as: "usuario",
 });
+
+usuario.hasMany(treino, {
+  foreignKey: "usuarioId",
+});
+treino.belongsTo(usuario);
 
 module.exports = db;

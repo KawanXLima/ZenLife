@@ -5,7 +5,7 @@ exports.delete = (req, res) => {
   const id = req.params.id;
 
   Rotina.destroy({
-    where: { id: id },
+    where: { id: id, usuarioId: req.user.id },
   })
     .then((num) => {
       if (num === 1) {
