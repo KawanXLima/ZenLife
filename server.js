@@ -4,10 +4,11 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const db = require("./models/index");
 const validarLogin = require("./controllers/autenticacao-controller/logado.controller");
+const { json } = require("sequelize");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: 'http://127.0.0.1:5500',header: "origin, ContentType: application/json , accept",  credentials: true }));
 
 app.use(cookieParser());
 
@@ -23,10 +24,6 @@ db.sequelize
   .catch((err) => {
     console.log("Failed to sync db: " + err.message);
   });
-
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and re-sync db.");
-});
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to ZenLife API" });

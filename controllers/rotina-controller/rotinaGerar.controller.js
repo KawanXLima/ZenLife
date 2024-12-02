@@ -100,6 +100,7 @@ async function gerar_rotina(req_body) {
         .replace(/\n```/g, "")
         .trim();
       const jsonObject = JSON.parse(jsonString);
+      console.log("Resposta gerada pela IA:", jsonObject.treino); // Verifique a resposta antes de tentar processar
 
       return jsonObject.rotina; // Retorna apenas a rotina gerada
     }
