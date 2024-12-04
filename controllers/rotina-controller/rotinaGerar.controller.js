@@ -15,6 +15,7 @@ exports.create = async (req, res) => {
     lesao,
     area_desenvolvimento,
     duracao_rotina,
+    id
   } = req.body;
 
   if (
@@ -25,7 +26,8 @@ exports.create = async (req, res) => {
     !tempo ||
     !lesao ||
     !area_desenvolvimento ||
-    !duracao_rotina
+    !duracao_rotina ||
+    !id
   ) {
     return res.status(400).send({
       message: "Content can not be empty! Please fill all the fields.",
@@ -36,12 +38,12 @@ exports.create = async (req, res) => {
     const rotina = await gerar_rotina(req.body);
     if (rotina) {
       try {
-        const result_insert_rotina = await inserir_rotina(rotina, req.user.id);
+        const result_insert_rotina = await inserir_rotina(rotina, id);
         if (result_insert_rotina) {
           const result_insert_treino = await inserir_treino(
             rotina.treino,
             result_insert_rotina.id,
-            req.user.id
+            id
           );
           if (result_insert_treino) {
             return res.send({ data: true });

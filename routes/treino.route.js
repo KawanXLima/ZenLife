@@ -4,7 +4,7 @@ module.exports = (app) => {
 
   var router = require("express").Router();
 
-  router.get("/", treinoView.findAll);
+  router.get("email/:login", treinoView.findAll);
   router.get("/:id", treinoView.findOne);
   router.put("/", treinoUpdate.update);
 

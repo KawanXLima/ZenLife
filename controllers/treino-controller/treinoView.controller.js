@@ -6,7 +6,7 @@ exports.findAll = async (req, res) => {
   try {
     const treino = await Treino.findAll({
       where: {
-        usuarioId: req.user.id, // Filtra apenas os treinos do usuário autenticado
+        usuarioId: req.id, // Filtra apenas os treinos do usuário autenticado
       },
       include: [
         {

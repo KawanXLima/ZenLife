@@ -7,7 +7,7 @@ module.exports = (app) => {
   var router = require("express").Router();
 
   router.post("/", rotinaGerar.create);
-  router.get("/", rotinaView.findAll);
+  router.get("/all/:id", rotinaView.findAll);
   router.get("/:id", rotinaView.findOne);
   router.put("/", rotinaUpdate.update);
   router.delete("/:id", rotinaDelete.delete);

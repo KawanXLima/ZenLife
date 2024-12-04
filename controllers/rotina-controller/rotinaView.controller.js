@@ -19,7 +19,7 @@ exports.findAll = async (req, res) => {
         },
       ],
       where: {
-        usuarioId: req.user.id,
+        usuarioId: req.params.id,
       },
     });
 
